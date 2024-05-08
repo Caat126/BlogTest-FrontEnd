@@ -52,6 +52,11 @@
                     <p class="help-block text-danger"></p>
                 </div>
                 <div class="control-group">
+                    <input type="text" v-model="telefono" class="form-control" id="telefono" placeholder="Ingresa tu telefono" required="required"
+                        data-validation-required-message="Please enter your telefono" />
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="control-group">
                     <input type="text" v-model="tema" class="form-control" id="subject" placeholder="Escribe el tema" required="required"
                         data-validation-required-message="Please enter a subject" />
                     <p class="help-block text-danger"></p>
@@ -86,9 +91,11 @@ export default {
         const correo = ref('');
         const tema = ref('');
         const mensaje = ref('');
+        const telefono = ref('');
 
         const enviarMensaje = async () => {
-            if (nombre.value == '' || correo.value == '' || tema.value == '' || mensaje.value == '') {
+            if (nombre.value == '' || correo.value == '' || tema.value == '' || mensaje.value == ''|| telefono.value == '') 
+            {
                 alert ('Todos los campos son obligatorios');
                 return;
             }
@@ -96,6 +103,7 @@ export default {
                 const { data } = await Axios.post(baseUrl + '/contactos', {
                     nombre: nombre.value,
                     correo: correo.value,
+                    telefono: telefono.value,
                     tema: tema.value,
                     mensaje: mensaje.value
                 }, {
@@ -111,12 +119,17 @@ export default {
                 enviado.value = false;
                 nombre.value = '';
                 correo.value = '';
+                telefono.value = '';
                 tema.value = '';
                 mensaje.value = '';
             }, 2000)
 
             } catch (error) {
-                console.log(error);
+                let errores = '';
+                for(let item in error.response.data.errors) {
+                    errores += error.response.data.errors[item] + '\n';
+                }
+            alert (errores);
             }
         }
 
@@ -126,6 +139,7 @@ export default {
             correo,
             tema,
             mensaje,
+            telefono,
             enviarMensaje
         }
     }
